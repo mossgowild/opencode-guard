@@ -1,0 +1,11 @@
+#!/bin/sh
+# The shell opencode-guard has OpenCode spawn: runs the command sandbox-runtime wrapped.
+# OpenCode passes the original command as arguments; the wrapped one, which
+# contains it, travels in the environment so session history keeps the original.
+if [ -z "$OPENCODE_GUARD_COMMAND" ]; then
+  echo "opencode-guard: no wrapped command, nothing was run" >&2
+  exit 126
+fi
+wrapped=$OPENCODE_GUARD_COMMAND
+unset OPENCODE_GUARD_COMMAND
+exec /bin/sh -c "$wrapped"

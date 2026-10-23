@@ -1,0 +1,26 @@
+{
+  "name": "opencode-guard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@anthropic-ai/sandbox-runtime": "0.0.78",
+    "@opencode/core": "2.1.2",
+    "@opencode/plugin": "2.1.2",
+    "effect": "4.0.1"
+  },
+  "devDependencies": {
+    "@opencode/theme": "2.1.2",
+    "@opentui/core": "0.6.6",
+    "@opentui/solid": "0.6.6",
+    "bun-types": "^1.4.3",
+    "solid-js": "1.9.15",
+    "typescript": "^7.0.2"
+  }
+}
