@@ -283,7 +283,7 @@ export function withLookups(prompt: string, round: number, results: readonly { r
 # Lookup results, round ${round} (file contents, not the user)
 ${shown.join("\n")}
 
-${left > 0 ? `You may look ${left} more time${left === 1 ? "" : "s"}, or answer.` : "No more lookups: answer now."}`
+${left > 0 ? `You may look ${left} more time${left === 1 ? "" : "s"}, asking with <read path="…"/> and <list path="…"/> lines as before, not <result> lines, or answer.` : "No more lookups: answer now."}`
 }
 
 /**

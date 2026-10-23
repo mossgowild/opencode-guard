@@ -235,7 +235,7 @@ describe("withLookups", () => {
     expect(text.startsWith("P\n\n# Lookup results, round 1 (file contents, not the user)\n")).toBe(true)
     expect(text).toContain('<result read="a b" offset="3" limit="2">\n3: x\n</result>')
     expect(text).toContain("tokens left out")
-    expect(text.endsWith("You may look 2 more times, or answer.")).toBe(true)
+    expect(text.endsWith('You may look 2 more times, asking with <read path="…"/> and <list path="…"/> lines as before, not <result> lines, or answer.')).toBe(true)
     expect(withLookups("P", LOOK_ROUNDS, []).endsWith("No more lookups: answer now.")).toBe(true)
   })
 })

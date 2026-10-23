@@ -13,6 +13,20 @@ describe("parseLookups", () => {
     ])
     expect(parseLookups("<block>no</block>")).toEqual([])
   })
+
+  test("takes an empty result line, as a model writes after seeing a round of results, as a request; one with content is not", () => {
+    // As review models answered in the second and third rounds.
+    expect(parseLookups('<result read="scripts/w.py" offset="340" limit="200"/>\n</result>')).toEqual([{ kind: "read", path: "scripts/w.py", offset: 340, limit: 200 }])
+    expect(parseLookups('<result read="/a/check.ts"/>\n\n<result list="/a/scripts"/>')).toEqual([
+      { kind: "read", path: "/a/check.ts" },
+      { kind: "list", path: "/a/scripts" },
+    ])
+    expect(parseLookups('<result read="a">\n</result>\n<read path="b"/>')).toEqual([
+      { kind: "read", path: "a" },
+      { kind: "read", path: "b" },
+    ])
+    expect(parseLookups('<result read="a">\n1: x\n</result>')).toEqual([])
+  })
 })
 
 describe("look", () => {

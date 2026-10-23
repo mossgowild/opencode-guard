@@ -15,11 +15,22 @@ export type Lookup = { readonly kind: "read"; readonly path: string; readonly of
 /** The lookups an answer asks for, in order: `<read path="…" offset="…" limit="…"/>` and `<list path="…"/>`. */
 export function parseLookups(text: string): Lookup[] {
   const lookups: Lookup[] = []
-  for (const match of text.matchAll(/<(read|list)\b([^>]*?)\/?>/gi)) {
-    const attrs = Object.fromEntries([...match[2]!.matchAll(/(\w+)\s*=\s*"([^"]*)"/g)].map((attr) => [attr[1]!.toLowerCase(), attr[2]!]))
+  const attributes = (text: string): Record<string, string> => Object.fromEntries([...text.matchAll(/(\w+)\s*=\s*"([^"]*)"/g)].map((attr) => [attr[1]!.toLowerCase(), attr[2]!]))
+  // A model that has seen a round of results may ask in their shape instead:
+  // an empty `<result read="PATH"/>` or `<result list="PATH"/>` is a request
+  // too, as nothing came back in it.
+  const requests: { kind: string; attrs: Record<string, string>; at: number }[] = [
+    ...[...text.matchAll(/<(read|list)\b([^>]*?)\/?>/gi)].map((match) => ({ kind: match[1]!, attrs: attributes(match[2]!), at: match.index })),
+    ...[...text.matchAll(/<result\b([^>]*?)(?:\/>|>\s*<\/result>)/gi)].flatMap((match) => {
+      const attrs = attributes(match[1]!)
+      const kind = attrs.read !== undefined ? "read" : attrs.list !== undefined ? "list" : undefined
+      return kind ? [{ kind, attrs: { ...attrs, path: attrs[kind]! }, at: match.index }] : []
+    }),
+  ].sort((a, b) => a.at - b.at)
+  for (const { kind, attrs } of requests) {
     const path = attrs.path?.trim()
     if (!path) continue
-    if (match[1]!.toLowerCase() === "list") {
+    if (kind.toLowerCase() === "list") {
       lookups.push({ kind: "list", path })
       continue
     }
